@@ -1,0 +1,315 @@
+{
+  "featuredProducts": [
+    {
+      "id": 1,
+      "name": "Samsung Galaxy S24 Ultra",
+      "price": 89999,
+      "originalPrice": 99999,
+      "image": "https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.5,
+      "reviews": 2847,
+      "category": "Electronics",
+      "subcategory": "Smartphones",
+      "inStock": true,
+      "stockCount": 25,
+      "description": "Latest Samsung flagship with AI-powered photography and S Pen functionality. Features a 6.8-inch Dynamic AMOLED display, 200MP camera, and all-day battery life.",
+      "features": [
+        "6.8-inch Dynamic AMOLED 2X Display",
+        "200MP Main Camera with AI Enhancement",
+        "S Pen with Air Actions",
+        "5000mAh Battery with 45W Fast Charging",
+        "IP68 Water Resistance"
+      ],
+      "specifications": {
+        "Display": "6.8-inch Dynamic AMOLED 2X",
+        "Processor": "Snapdragon 8 Gen 3",
+        "RAM": "12GB",
+        "Storage": "256GB",
+        "Camera": "200MP + 50MP + 12MP + 10MP",
+        "Battery": "5000mAh"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Nike Air Force 1",
+      "price": 8995,
+      "originalPrice": 10995,
+      "image": "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.8,
+      "reviews": 1523,
+      "category": "Fashion",
+      "subcategory": "Footwear",
+      "inStock": true,
+      "stockCount": 50,
+      "description": "Classic white sneakers for everyday wear. The Nike Air Force 1 features premium leather construction and iconic design that never goes out of style.",
+      "features": [
+        "Premium Leather Upper",
+        "Air-Sole Unit for Cushioning",
+        "Rubber Outsole with Pivot Points",
+        "Classic White Colorway",
+        "Perforated Toe Box for Breathability"
+      ],
+      "specifications": {
+        "Material": "Premium Leather",
+        "Sole": "Rubber with Air-Sole Unit",
+        "Closure": "Lace-up",
+        "Color": "White/White",
+        "Origin": "Vietnam"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Instant Pot Duo 7-in-1",
+      "price": 6999,
+      "originalPrice": 8999,
+      "image": "https://images.pexels.com/photos/4518659/pexels-photo-4518659.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.6,
+      "reviews": 8542,
+      "category": "Home & Kitchen",
+      "subcategory": "Appliances",
+      "inStock": true,
+      "stockCount": 15,
+      "description": "Multi-functional electric pressure cooker that replaces 7 kitchen appliances. Perfect for busy families who want healthy, delicious meals in less time.",
+      "features": [
+        "7-in-1 Functionality",
+        "6-Quart Capacity",
+        "14 Smart Programs",
+        "Stainless Steel Inner Pot",
+        "Advanced Safety Features"
+      ],
+      "specifications": {
+        "Capacity": "6 Quarts (5.7L)",
+        "Functions": "Pressure Cook, Slow Cook, Rice Cooker, Steamer, Sauté, Yogurt Maker, Warmer",
+        "Material": "Stainless Steel",
+        "Power": "1000W",
+        "Warranty": "1 Year"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Levi's 501 Original Jeans",
+      "price": 3499,
+      "originalPrice": 4299,
+      "image": "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.4,
+      "reviews": 967,
+      "category": "Fashion",
+      "subcategory": "Clothing",
+      "inStock": true,
+      "stockCount": 30,
+      "description": "Classic straight-fit denim jeans that started it all. The original blue jean since 1873, crafted with premium denim and timeless style.",
+      "features": [
+        "100% Cotton Denim",
+        "Straight Fit",
+        "Button Fly",
+        "Classic 5-Pocket Design",
+        "Shrink-to-Fit"
+      ],
+      "specifications": {
+        "Material": "100% Cotton",
+        "Fit": "Straight",
+        "Rise": "Mid Rise",
+        "Closure": "Button Fly",
+        "Care": "Machine Wash Cold"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Apple MacBook Air M2",
+      "price": 119900,
+      "originalPrice": 134900,
+      "image": "https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.9,
+      "reviews": 3421,
+      "category": "Electronics",
+      "subcategory": "Laptops",
+      "inStock": true,
+      "stockCount": 8,
+      "description": "Lightweight laptop with M2 chip and 13-inch display. Perfect for students and professionals who need powerful performance in a portable design.",
+      "features": [
+        "Apple M2 Chip",
+        "13.6-inch Liquid Retina Display",
+        "8GB Unified Memory",
+        "256GB SSD Storage",
+        "Up to 18 Hours Battery Life"
+      ],
+      "specifications": {
+        "Processor": "Apple M2 8-core CPU",
+        "Display": "13.6-inch Liquid Retina",
+        "Memory": "8GB Unified Memory",
+        "Storage": "256GB SSD",
+        "Graphics": "8-core GPU"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Adidas Ultraboost 22",
+      "price": 15999,
+      "originalPrice": 17999,
+      "image": "https://images.pexels.com/photos/1478442/pexels-photo-1478442.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.7,
+      "reviews": 2156,
+      "category": "Sports",
+      "subcategory": "Running Shoes",
+      "inStock": false,
+      "stockCount": 0,
+      "description": "Premium running shoes with responsive cushioning. Features BOOST midsole technology and Primeknit upper for ultimate comfort and performance.",
+      "features": [
+        "BOOST Midsole Technology",
+        "Primeknit Upper",
+        "Continental Rubber Outsole",
+        "Torsion System",
+        "OrthoLite Sockliner"
+      ],
+      "specifications": {
+        "Upper": "Primeknit",
+        "Midsole": "BOOST",
+        "Outsole": "Continental Rubber",
+        "Drop": "10mm",
+        "Weight": "310g (Size 9)"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Sony WH-1000XM5 Headphones",
+      "price": 29990,
+      "originalPrice": 34990,
+      "image": "https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.8,
+      "reviews": 1876,
+      "category": "Electronics",
+      "subcategory": "Audio",
+      "inStock": true,
+      "stockCount": 12,
+      "description": "Industry-leading noise canceling headphones with exceptional sound quality and 30-hour battery life.",
+      "features": [
+        "Industry-leading Noise Canceling",
+        "30-hour Battery Life",
+        "Quick Charge (3 min = 3 hours)",
+        "Multipoint Connection",
+        "Speak-to-Chat Technology"
+      ],
+      "specifications": {
+        "Driver": "30mm",
+        "Frequency Response": "4Hz-40kHz",
+        "Battery": "30 hours",
+        "Charging": "USB-C",
+        "Weight": "250g"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Dyson V15 Detect Vacuum",
+      "price": 65900,
+      "originalPrice": 72900,
+      "image": "https://images.pexels.com/photos/4239091/pexels-photo-4239091.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "rating": 4.6,
+      "reviews": 892,
+      "category": "Home & Kitchen",
+      "subcategory": "Cleaning",
+      "inStock": true,
+      "stockCount": 6,
+      "description": "Powerful cordless vacuum with laser dust detection and intelligent suction adjustment.",
+      "features": [
+        "Laser Dust Detection",
+        "Intelligent Suction",
+        "60-minute Runtime",
+        "5-stage Filtration",
+        "LCD Screen Display"
+      ],
+      "specifications": {
+        "Suction": "230 Air Watts",
+        "Runtime": "Up to 60 minutes",
+        "Bin Capacity": "0.77L",
+        "Weight": "3.1kg",
+        "Filtration": "5-stage HEPA"
+      }
+    }
+  ],
+  "categories": [
+    {
+      "id": "electronics",
+      "name": "Electronics",
+      "icon": "Smartphone",
+      "image": "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Smartphones", "Laptops", "Audio", "Cameras", "Gaming"]
+    },
+    {
+      "id": "fashion",
+      "name": "Fashion",
+      "icon": "Shirt",
+      "image": "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Clothing", "Footwear", "Accessories", "Bags", "Jewelry"]
+    },
+    {
+      "id": "home-kitchen",
+      "name": "Home & Kitchen",
+      "icon": "Home",
+      "image": "https://images.pexels.com/photos/279618/pexels-photo-279618.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Appliances", "Furniture", "Decor", "Cleaning", "Storage"]
+    },
+    {
+      "id": "sports",
+      "name": "Sports & Outdoors",
+      "icon": "Dumbbell",
+      "image": "https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Running Shoes", "Fitness", "Outdoor Gear", "Team Sports", "Water Sports"]
+    },
+    {
+      "id": "books",
+      "name": "Books",
+      "icon": "Book",
+      "image": "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Fiction", "Non-Fiction", "Educational", "Children", "Comics"]
+    },
+    {
+      "id": "health",
+      "name": "Health & Beauty",
+      "icon": "Heart",
+      "image": "https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "subcategories": ["Skincare", "Makeup", "Health Supplements", "Personal Care", "Wellness"]
+    }
+  ],
+  "contextualRecommendations": {
+    "rainy": [
+      {
+        "id": 9,
+        "name": "Automatic Umbrella",
+        "price": 899,
+        "image": "https://images.pexels.com/photos/1415554/pexels-photo-1415554.jpeg?auto=compress&cs=tinysrgb&w=400",
+        "rating": 4.3,
+        "category": "Accessories",
+        "inStock": true
+      },
+      {
+        "id": 10,
+        "name": "Waterproof Jacket",
+        "price": 2499,
+        "image": "https://images.pexels.com/photos/1043143/pexels-photo-1043143.jpeg?auto=compress&cs=tinysrgb&w=400",
+        "rating": 4.6,
+        "category": "Fashion",
+        "inStock": true
+      }
+    ],
+    "summer": [
+      {
+        "id": 11,
+        "name": "Air Conditioner",
+        "price": 25999,
+        "image": "https://images.pexels.com/photos/7084308/pexels-photo-7084308.jpeg?auto=compress&cs=tinysrgb&w=400",
+        "rating": 4.4,
+        "category": "Home Appliances",
+        "inStock": true
+      },
+      {
+        "id": 12,
+        "name": "Summer Dress",
+        "price": 1299,
+        "image": "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400",
+        "rating": 4.2,
+        "category": "Fashion",
+        "inStock": true
+      }
+    ]
+  }
+}
