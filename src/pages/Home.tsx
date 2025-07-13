@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Camera, QrCode, ShoppingBag, Star, Zap, Shield, Truck, ArrowRight, Clock, Eye } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
@@ -30,6 +30,24 @@ const Home: React.FC = () => {
       )
     ).slice(0, 5);
   };
+
+  const allProducts = featuredProducts;
+
+  const displayedProducts = useMemo(() => {
+    if (state.currentCategory) {
+      return allProducts.filter(
+        product => product.category.toLowerCase() === state.currentCategory!.toLowerCase()
+      );
+    }
+
+    if (state.searchQuery) {
+      return allProducts.filter(
+        product => product.name.toLowerCase().includes(state.searchQuery.toLowerCase())
+      );
+    }
+
+    return allProducts;
+  }, [state.currentCategory, state.searchQuery]);
 
   const userRecommendations = getUserRecommendations();
 
@@ -112,6 +130,15 @@ const Home: React.FC = () => {
             </h2>
             <CategoryGrid categories={categories} />
           </motion.div>
+        </section>
+
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('search_results')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedProducts.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} />
+            ))}
+          </div>
         </section>
 
         {state.user && userRecommendations.length > 0 && (

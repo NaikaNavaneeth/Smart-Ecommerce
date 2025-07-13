@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, MicOff } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { keywordToCategoryMap } from '../utils/categoryMap';
 
 const VoiceSearch: React.FC = () => {
   const { state, dispatch } = useApp();
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -14,18 +16,21 @@ const VoiceSearch: React.FC = () => {
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    if (!recognitionRef.current) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+    }
 
-    recognition.continuous = false;
-    recognition.interimResults = true;
+    const recognition = recognitionRef.current;
     recognition.lang = state.language === 'hi' ? 'hi-IN' : 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
     };
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const currentTranscript = event.results[0][0].transcript;
       setTranscript(currentTranscript);
       dispatch({ type: 'SET_SEARCH_QUERY', payload: currentTranscript });
@@ -35,13 +40,17 @@ const VoiceSearch: React.FC = () => {
       setIsListening(false);
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
     };
 
     if (state.isVoiceSearchActive) {
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.warn('Recognition already started or failed to start:', err);
+      }
     }
 
     return () => {
@@ -49,8 +58,29 @@ const VoiceSearch: React.FC = () => {
     };
   }, [state.isVoiceSearchActive, state.language, dispatch]);
 
+  useEffect(() => {
+    if (transcript) {
+      const lower = transcript.toLowerCase();
+      const foundKeyword = Object.keys(keywordToCategoryMap).find(keyword => lower.includes(keyword));
+
+      if (foundKeyword) {
+        const matchedCategory = keywordToCategoryMap[foundKeyword];
+        dispatch({ type: 'SET_CATEGORY_FILTER', payload: matchedCategory });
+        dispatch({ type: 'SET_SEARCH_QUERY', payload: foundKeyword });
+        console.log('Matched category:', matchedCategory);
+      } else {
+        console.log('No matching category found for transcript:', transcript);
+      }
+    }
+  }, [transcript]);
+
   const toggleVoiceSearch = () => {
-    dispatch({ type: 'TOGGLE_VOICE_SEARCH' });
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      dispatch({ type: 'TOGGLE_VOICE_SEARCH' });
+    }
   };
 
   return (
@@ -59,8 +89,8 @@ const VoiceSearch: React.FC = () => {
       whileTap={{ scale: 0.9 }}
       onClick={toggleVoiceSearch}
       className={`px-3 py-3 border-2 border-l-0 border-r-0 transition-colors ${
-        isListening 
-          ? 'bg-red-500 text-white border-red-500' 
+        isListening
+          ? 'bg-red-500 text-white border-red-500'
           : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
       }`}
     >
@@ -84,6 +114,10 @@ declare global {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
   }
+
+  type SpeechRecognition = typeof window.SpeechRecognition;
+  type SpeechRecognitionEvent = any;
+  type SpeechRecognitionErrorEvent = any;
 }
 
 export default VoiceSearch;

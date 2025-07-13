@@ -9,6 +9,7 @@ interface AppState {
   userInterests : string[];
   cart: CartItem[];
   wishlist: WishlistItem[];
+  currentCategory: string | null;
   // userInterests: string[];
   // Unifying user activity and interests here
   userActivity: {
@@ -34,6 +35,7 @@ type AppAction =
   | { type: 'LOGIN'; payload: User }
   | { type: 'LOGOUT' }
   | { type: 'SIGNUP'; payload: User }
+  | { type: 'SET_CATEGORY_FILTER'; payload: string }
   | { type: 'ADD_TO_CART'; payload: { product: Product; quantity?: number; size?: string; color?: string } }
   | { type: 'REMOVE_FROM_CART'; payload: number }
   | { type: 'UPDATE_QUANTITY'; payload: { productId: number; quantity: number } }
@@ -63,6 +65,7 @@ const initialState: AppState = {
   isAuthenticated: false,
   cart: [],
   wishlist: [],
+  currentCategory: null,
   userInterests: [],
   recentlyViewed: [],
   userActivity: {
@@ -103,6 +106,11 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           type: 'success' 
         }
       };
+    case 'SET_CATEGORY_FILTER':
+      return {
+      ...state,
+      currentCategory: action.payload
+    };
 
     case 'LOGOUT':
       localStorage.removeItem('smartshop_user');

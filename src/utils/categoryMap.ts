@@ -1,0 +1,18 @@
+export const keywordToCategoryMap: Record<string, string> = {
+  shoes: 'Footwear',
+  bat: 'Sports',
+  bats: 'Sports',
+  racket: 'Sports',
+  jeans: 'Clothing',
+  shirts: 'Clothing',
+  laptop: 'Electronics',
+  phone: 'Electronics',
+  mobile: 'Electronics',
+  headphones: 'Accessories',
+  watch: 'Accessories',
+  bags: 'Accessories',
+  toy: 'Kids',
+  toys: 'Kids',
+  saree: 'Fashion',
+  dress: 'Fashion',
+};
