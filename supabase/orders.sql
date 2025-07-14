@@ -1,0 +1,22 @@
+create table orders (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id),
+  product_id uuid references products(id),
+  product_name text,
+  product_image text,
+  price numeric,
+  quantity integer,
+  total_amount numeric,
+  payment_type text,
+  payment_status text default 'Pending',
+  order_status text default 'Pending',
+  full_name text,
+  mobile_number text,
+  email text,
+  address text,
+  city text,
+  pincode text,
+  delivery_eta timestamp,
+  notes text,
+  created_at timestamp default current_timestamp
+);

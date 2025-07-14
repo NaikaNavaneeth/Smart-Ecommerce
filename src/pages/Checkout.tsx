@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  CreditCard, 
-  Smartphone, 
-  Wallet, 
+import {
+  ArrowLeft,
+  CreditCard,
+  Smartphone,
+  Wallet,
   Truck,
   Check,
   Lock,
   MapPin
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { CheckoutForm, Order } from '../types';
+import { CheckoutForm } from '../types';
+import { supabase } from '../lib/supabase';
 
 const Checkout: React.FC = () => {
   const { state, dispatch } = useApp();
@@ -39,14 +40,13 @@ const Checkout: React.FC = () => {
     }).format(price);
   };
 
-  const subtotal = state.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  const subtotal = state.cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const shipping = subtotal > 499 ? 0 : 99;
   const tax = Math.round(subtotal * 0.18);
   const total = subtotal + shipping + tax;
 
   const validateForm = () => {
     const newErrors: Partial<CheckoutForm> = {};
-
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.mobile.trim()) newErrors.mobile = 'Mobile number is required';
     else if (!/^\d{10}$/.test(formData.mobile)) newErrors.mobile = 'Invalid mobile number';
@@ -78,23 +78,48 @@ const Checkout: React.FC = () => {
 
   const handlePlaceOrder = async () => {
     setIsProcessing(true);
-    
-    // Simulate order processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const orderId = `ORD${Date.now()}`;
 
-    const order: Order = {
-      id: `ORD${Date.now()}`,
-      items: state.cart,
-      total,
-      customerInfo: formData,
-      orderDate: new Date(),
-      status: 'pending'
-    };
+    const orderInserts = state.cart.map((item) => ({
+      order_id: orderId,
+      user_id: state.user?.id,
+      product_id: item.product.id,
+      product_name: item.product.name,
+      product_image: item.product.image_url || item.product.image_url,
+      price: item.product.price,
+      quantity: item.quantity,
+      total_amount: item.product.price * item.quantity,
+      payment_type: formData.paymentMode,
+      payment_status: formData.paymentMode === 'cod' ? 'Pending' : 'Paid',
+      order_status: 'Pending',
+      full_name: formData.name,
+      mobile_number: formData.mobile,
+      email: formData.email,
+      address: formData.address,
+      city: formData.city,
+      pincode: formData.pincode,
+      notes: '',
+      order_date: new Date().toISOString()
+    }));
 
-    dispatch({ type: 'ADD_ORDER', payload: order });
+    const { error } = await supabase.from('orders').insert(orderInserts);
+
+    if (error) {
+      console.error('Order submission failed:', error.message);
+      setIsProcessing(false);
+      return;
+    }
+
+    for (const item of state.cart) {
+      const newStock = item.product.stock_count - item.quantity;
+      await supabase
+        .from('products')
+        .update({ stock_count: newStock })
+        .eq('id', item.product.id);
+    }
+
     dispatch({ type: 'CLEAR_CART' });
-    
-    navigate('/order-success', { state: { orderId: order.id } });
+    navigate('/order-success', { state: { orderId } });
   };
 
   const steps = [
@@ -345,7 +370,7 @@ const Checkout: React.FC = () => {
                       {state.cart.map((item) => (
                         <div key={item.product.id} className="flex items-center space-x-4">
                           <img
-                            src={item.product.image}
+                            src={item.product.image_url}
                             alt={item.product.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />

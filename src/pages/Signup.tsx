@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 const Signup: React.FC = () => {
   const { dispatch } = useApp();
@@ -53,17 +54,29 @@ const Signup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const { data, error } = await supabase.from('users').insert([
+      {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      }
+    ]).select();
 
-    // Mock successful signup
+    if (error) {
+      toast.error('Signup failed: ' + error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    const userId = data && data.length > 0 && 'id' in data[0] ? data[0].id : Date.now().toString();
+
     const user = {
-      id: Date.now().toString(),
+      id: userId,
       name: formData.name,
       email: formData.email,
       avatar: `https://ui-avatars.com/api/?name=${formData.name}&background=3b82f6&color=fff`,
@@ -73,7 +86,7 @@ const Signup: React.FC = () => {
 
     dispatch({ type: 'SET_USER', payload: user });
     toast.success(`Welcome to SmartShop+, ${user.name}!`);
-    
+
     setIsLoading(false);
     navigate(from, { replace: true });
   };

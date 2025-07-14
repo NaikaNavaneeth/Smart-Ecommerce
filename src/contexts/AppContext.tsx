@@ -20,6 +20,7 @@ interface AppState {
   };
   language: string;
   searchQuery: string;
+  recentSearches?: string[];
   isVoiceSearchActive: boolean;
   isChatOpen: boolean;
   currentWeather: string;
@@ -31,8 +32,10 @@ interface AppState {
 }
 
 type AppAction = 
-  | { type: 'SET_USER'; payload: User }
+  | { type: 'SET_USER'; payload: User | null }
   | { type: 'LOGIN'; payload: User }
+  | { type: 'ADD_RECENTLY_VIEWED'; payload: Product }
+  | { type: 'ADD_USER_INTEREST'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'SIGNUP'; payload: User }
   | { type: 'SET_CATEGORY_FILTER'; payload: string }
@@ -40,9 +43,10 @@ type AppAction =
   | { type: 'REMOVE_FROM_CART'; payload: number }
   | { type: 'UPDATE_QUANTITY'; payload: { productId: number; quantity: number } }
   | { type: 'ADD_TO_WISHLIST'; payload: Product }
-  | { type: 'REMOVE_FROM_WISHLIST'; payload: number }
+  | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'ADD_VIEWED_PRODUCT'; payload: Product }
   | { type: 'ADD_SEARCH_QUERY'; payload: string }
+  | { type: 'ADD_RECENT_SEARCH'; payload: string }
   | { type: 'ADD_CLICKED_CATEGORY'; payload: string }
   | { type: 'LOAD_USER_ACTIVITY'; payload: Partial<AppState['userActivity']> }
   | { type: 'SET_LANGUAGE'; payload: string }
@@ -76,6 +80,7 @@ const initialState: AppState = {
   },
   language: 'en',
   searchQuery: '',
+  recentSearches: [],
   isVoiceSearchActive: false,
   isChatOpen: false,
   currentWeather: 'sunny',
@@ -110,6 +115,24 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
       ...state,
       currentCategory: action.payload
+    };
+
+    case 'ADD_RECENTLY_VIEWED':
+    return {
+      ...state,
+      recentlyViewed: [
+      action.payload,
+      ...state.recentlyViewed.filter(p => String(p.id) !== String(action.payload.id))
+      ].slice(0, 10),
+    };
+
+    case 'ADD_USER_INTEREST':
+      return {
+      ...state,
+      userInterests: [
+        action.payload,
+        ...state.userInterests.filter(interest => interest !== action.payload)
+      ].slice(0, 10)
     };
 
     case 'LOGOUT':
@@ -156,13 +179,13 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       };
 
     case 'REMOVE_FROM_CART':
-      const filteredCart = state.cart.filter(item => item.product.id !== action.payload);
+      const filteredCart = state.cart.filter(item => item.product.id !== String(action.payload));
       localStorage.setItem('smartshop_cart', JSON.stringify(filteredCart));
-      return { ...state, cart: filteredCart };
+      return { ...state, wishlist: state.wishlist.filter(item => item.product.id !== String(action.payload)), };
 
     case 'UPDATE_QUANTITY':
       const updatedCart = state.cart.map(item =>
-        item.product.id === action.payload.productId
+        item.product.id === String(action.payload.productId)
           ? { ...item, quantity: action.payload.quantity }
           : item
       ).filter(item => item.quantity > 0);
@@ -182,7 +205,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       };
 
     case 'REMOVE_FROM_WISHLIST':
-      const filteredWishlist = state.wishlist.filter(item => item.product.id !== action.payload);
+      const filteredWishlist = state.wishlist.filter(item => item.product.id !== String(action.payload));
       localStorage.setItem('smartshop_wishlist', JSON.stringify(filteredWishlist));
       return { ...state, wishlist: filteredWishlist };
 
@@ -228,6 +251,15 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.payload };
+
+    case 'ADD_RECENT_SEARCH':
+      return {
+        ...state,
+        recentSearches: [
+          ...new Set([action.payload, ...(state.recentSearches || [])]),
+        ].slice(0, 10), // limit to 10
+      };
+
 
     case 'TOGGLE_VOICE_SEARCH':
       return { ...state, isVoiceSearchActive: !state.isVoiceSearchActive };

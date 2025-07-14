@@ -32,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
       navigate('/login', { state: { from: { pathname: `/product/${product.id}` } } });
       return;
     }
-    
+
     if (isInWishlist) {
       dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: product.id });
       toast.success('Removed from wishlist');
@@ -67,13 +67,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
     >
       <div className="relative">
         <img
-          src={product.image}
+          src={product.image_url}
           alt={product.name}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        {product.originalPrice && product.originalPrice > product.price && (
+        {product.original_price && product.original_price > product.price && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+            {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
           </div>
         )}
         <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -134,18 +134,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             <span className="text-xl font-bold text-gray-900">
               {formatPrice(product.price)}
             </span>
-            {product.originalPrice && product.originalPrice > product.price && (
+            {product.original_price && product.original_price > product.price && (
               <span className="text-sm text-gray-500 line-through">
-                {formatPrice(product.originalPrice)}
+                {formatPrice(product.original_price)}
               </span>
             )}
           </div>
           <div className={`text-xs px-2 py-1 rounded ${
-            product.inStock 
+            product.in_stock 
               ? 'bg-green-100 text-green-800' 
               : 'bg-red-100 text-red-800'
           }`}>
-            {product.inStock ? 'In Stock' : 'Out of Stock'}
+            {product.in_stock ? 'In Stock' : 'Out of Stock'}
           </div>
         </div>
 
@@ -153,15 +153,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleAddToCart}
-          disabled={!product.inStock}
+          disabled={!product.in_stock}
           className={`w-full py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
-            product.inStock
+            product.in_stock
               ? 'bg-blue-600 hover:bg-blue-700 text-white'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
           <ShoppingCart className="w-4 h-4" />
-          <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+          <span>{product.in_stock ? 'Add to Cart' : 'Out of Stock'}</span>
         </motion.button>
       </div>
     </motion.div>

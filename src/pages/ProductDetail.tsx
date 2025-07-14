@@ -16,8 +16,10 @@ import {
   Check
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { Product } from '../types';
-import productsData from '../data/products.json';
+import { Product } from '../types/index';
+// import productsData from '../data/products.json';
+import { supabase } from '../lib/supabase';
+
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,11 +34,24 @@ const ProductDetail: React.FC = () => {
   const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      const foundProduct = productsData.featuredProducts.find(p => p.id === parseInt(id));
-      setProduct(foundProduct || null);
-    }
+    const fetchProduct = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if(error) {
+        console.error('Failed to fetch product:', error.message);
+        return;
+      }
+
+      setProduct(data);
+    };
+
+    if (id) fetchProduct();
   }, [id]);
+
 
   const handleAddToCart = () => {
     if (product) {
@@ -58,13 +73,25 @@ const ProductDetail: React.FC = () => {
     }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (product) {
       if (!state.user) {
         navigate('/login', { state: { from: { pathname: `/product/${product.id}` } } });
         return;
       }
       handleAddToCart();
+      // Update stock
+    const updatedStock = product.stock_count - quantity;
+      const { error } = await supabase
+      .from('products')
+      .update({ stock_count: updatedStock })
+      .eq('id', product.id);
+
+    if (error) {
+      console.error('Failed to update stock:', error.message);
+    }   else {
+      navigate('/checkout');
+    }
       navigate('/checkout');
     }
   };
@@ -93,7 +120,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const images = [product.image, product.image, product.image]; // Mock multiple images
+  const images = [product.image_url, product.image_url, product.image_url]; // Mock multiple images
   const sizes = ['S', 'M', 'L', 'XL']; // Mock sizes
   const colors = ['Black', 'White', 'Blue', 'Red']; // Mock colors
 
@@ -126,7 +153,7 @@ const ProductDetail: React.FC = () => {
                 alt={product.name}
                 className="w-full h-96 object-cover"
               />
-              {!product.inStock && (
+              {!product.stock_count && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
                     Out of Stock
@@ -196,13 +223,13 @@ const ProductDetail: React.FC = () => {
               <span className="text-3xl font-bold text-gray-900">
                 {formatPrice(product.price)}
               </span>
-              {product.originalPrice && product.originalPrice > product.price && (
+              {product.original_price && product.original_price > product.price && (
                 <>
                   <span className="text-xl text-gray-500 line-through">
-                    {formatPrice(product.originalPrice)}
+                    {formatPrice(product.original_price)}
                   </span>
                   <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-semibold">
-                    {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                    {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
                   </span>
                 </>
               )}
@@ -210,14 +237,14 @@ const ProductDetail: React.FC = () => {
 
             {/* Stock Status */}
             <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              product.inStock 
+              product.in_stock 
                 ? 'bg-green-100 text-green-800' 
                 : 'bg-red-100 text-red-800'
             }`}>
-              {product.inStock ? (
+              {product.in_stock ? (
                 <>
                   <Check className="w-4 h-4 mr-1" />
-                  In Stock ({product.stockCount} available)
+                  In Stock ({product.stock_count} available)
                 </>
               ) : (
                 'Out of Stock'
@@ -295,9 +322,9 @@ const ProductDetail: React.FC = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={!product.in_stock}
                   className={`flex-1 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
-                    product.inStock
+                    product.in_stock
                       ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
@@ -310,9 +337,9 @@ const ProductDetail: React.FC = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleBuyNow}
-                  disabled={!product.inStock}
+                  disabled={!product.in_stock}
                   className={`flex-1 py-4 rounded-lg font-semibold transition-colors ${
-                    product.inStock
+                    product.in_stock
                       ? 'bg-blue-600 hover:bg-blue-700 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}

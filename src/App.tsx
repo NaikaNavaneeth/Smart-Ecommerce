@@ -15,6 +15,10 @@ import OrderSuccess from './pages/OrderSuccess';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Wishlist from './pages/Wishlist';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import MyOrders from './pages/MyOrders';
+import OrderDetail from './pages/OrderDetail';
 
 function App() {
   return (
@@ -35,6 +39,11 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/order/:orderId" element={<OrderDetail />} />
+
             </Routes>
           </main>
           <Footer />

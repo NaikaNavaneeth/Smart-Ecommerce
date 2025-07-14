@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 const Login: React.FC = () => {
   const { dispatch } = useApp();
@@ -40,27 +41,42 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', formData.email)
+      .maybeSingle();
 
-    // Mock successful login
+    if (userError || !userData) {
+      toast.error('User not found. Please sign up first.');
+      setIsLoading(false);
+      navigate('/signup');
+      return;
+    }
+
+    if (userData.password !== formData.password) {
+      toast.error('Incorrect password. Please try again.');
+      setIsLoading(false);
+      return;
+    }
+
     const user = {
-      id: '1',
-      name: formData.email.split('@')[0],
-      email: formData.email,
-      avatar: `https://ui-avatars.com/api/?name=${formData.email.split('@')[0]}&background=3b82f6&color=fff`,
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+      avatar: `https://ui-avatars.com/api/?name=${userData.name}&background=3b82f6&color=fff`,
       location: 'Mumbai',
       language: 'en'
     };
 
     dispatch({ type: 'SET_USER', payload: user });
     toast.success(`Welcome back, ${user.name}!`);
-    
+
     setIsLoading(false);
     navigate(from, { replace: true });
   };
@@ -154,7 +170,7 @@ const Login: React.FC = () => {
               <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
               <span className="ml-2 text-sm text-gray-600">Remember me</span>
             </label>
-            <button type="button" className="text-sm text-blue-600 hover:text-blue-700">
+            <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm text-blue-600 hover:text-blue-700">
               Forgot password?
             </button>
           </div>

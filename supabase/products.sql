@@ -1,0 +1,21 @@
+create table products (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null,
+  slug text unique not null,
+  category text not null,
+  subcategory text,
+  description text,
+  price numeric not null,
+  original_price numeric,
+  stock_count integer default 0,
+  in_stock boolean default true,
+  image_url text,
+  gallery text[],
+  rating numeric default 0,
+  reviews integer default 0,
+  features text[],
+  specifications jsonb,
+  tags text[],
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);

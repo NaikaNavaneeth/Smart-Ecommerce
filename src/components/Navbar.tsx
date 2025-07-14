@@ -209,7 +209,13 @@ const Navbar: React.FC = () => {
                         <p className="font-medium text-gray-800">{state.user.name}</p>
                         <p className="text-sm text-gray-600">{state.user.email}</p>
                       </div>
-                      <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                      <button
+                          onClick={() => {
+                            navigate('/my-orders');
+                            setIsUserMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                        >
                         <Package className="w-4 h-4" />
                         <span>My Orders</span>
                       </button>
