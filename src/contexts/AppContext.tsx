@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { Product, CartItem, User, CheckoutForm, Order, WishlistItem, UserActivity } from '../types';
 import i18n from '../i18n'; // ✅ Adjust the path as needed
+import { supabase } from '../lib/supabase';
+
 
 interface AppState {
   user: User | null;
@@ -29,6 +31,7 @@ interface AppState {
   isLoading: boolean;
   toast: { message: string; type: 'success' | 'error' | 'info' } | null;
   redirectPath: string | null;
+  sessionChecked: boolean;
 }
 
 type AppAction = 
@@ -61,7 +64,8 @@ type AppAction =
   | { type: 'ADD_ORDER'; payload: Order }
   | { type: 'LOAD_CART_FROM_STORAGE'; payload: CartItem[] }
   | { type: 'SHOW_TOAST'; payload: { message: string; type: 'success' | 'error' | 'info' } }
-  | { type: 'HIDE_TOAST' }
+  | { type: 'HIDE_TOAST' } 
+  | { type: 'SET_SESSION_CHECKED' }
   | { type: 'SET_REDIRECT_PATH'; payload: string | null };
 
 const initialState: AppState = {
@@ -88,7 +92,8 @@ const initialState: AppState = {
   orders: [],
   isLoading: false,
   toast: null,
-  redirectPath: null
+  redirectPath: null,
+  sessionChecked: false
 };
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -99,20 +104,25 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         user: action.payload,
         isAuthenticated: !!action.payload,
       };
-    case 'LOGIN':
-    case 'SIGNUP':
-      localStorage.setItem('smartshop_user', JSON.stringify(action.payload));
-      return { 
-        ...state, 
-        user: action.payload, 
-        isAuthenticated: true,
-        toast: { 
-          message: action.type === 'LOGIN' ? `Welcome back, ${action.payload.name}!` : `Welcome to SmartShop+, ${action.payload.name}!`, 
-          type: 'success' 
-        }
-      };
-    case 'SET_CATEGORY_FILTER':
-      return {
+      case 'LOGIN':
+        case 'SIGNUP':
+          localStorage.setItem('smartshop_user', JSON.stringify(action.payload));
+          return { 
+            ...state, 
+            user: action.payload, 
+            isAuthenticated: true,
+            toast: { 
+              message: action.type === 'LOGIN' ? `Welcome back, ${action.payload.name}!` : `Welcome to SmartShop+, ${action.payload.name}!`, 
+              type: 'success' 
+            }
+          };
+          case 'SET_SESSION_CHECKED':
+              return {
+                ...state,
+                sessionChecked: true,
+              };
+          case 'SET_CATEGORY_FILTER':
+            return {
       ...state,
       currentCategory: action.payload
     };
@@ -291,6 +301,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'LOAD_CART_FROM_STORAGE':
       return { ...state, cart: action.payload };
 
+
     default:
       return state;
   }
@@ -307,6 +318,37 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
   i18n.changeLanguage(state.language);
   }, [state.language]);
+
+  useEffect(() => {
+  const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (session?.user) {
+      const user = session.user;
+      const { data: profile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      dispatch({
+        type: 'SET_USER',
+        payload: {
+          id: user.id,
+          name: profile?.name || user.email,
+          email: user.email!,
+          avatar: profile?.avatar_url || '',
+          language: profile?.language || 'en'
+        }
+      });
+    } else {
+      dispatch({ type: 'SET_USER', payload: null });
+    }
+    dispatch({ type: 'SET_SESSION_CHECKED' });
+  });
+
+  return () => {
+    authListener?.subscription.unsubscribe();
+  };
+}, []);
 
   // Load data from localStorage on mount
   useEffect(() => {

@@ -19,6 +19,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import MyOrders from './pages/MyOrders';
 import OrderDetail from './pages/OrderDetail';
+import ChatPage from './pages/ChatPage';
+
 
 function App() {
   return (
@@ -43,6 +45,7 @@ function App() {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/order/:orderId" element={<OrderDetail />} />
+              <Route path="/ai-chat" element={<ChatPage />} />
 
             </Routes>
           </main>

@@ -1,5 +1,5 @@
 create table orders (
-  id uuid primary key default gen_random_uuid(),
+  order_id uuid primary key default gen_random_uuid(),
   user_id uuid references users(id),
   product_id uuid references products(id),
   product_name text,

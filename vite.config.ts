@@ -7,4 +7,13 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  server: {
+    proxy: {
+      '/webhook-test': {
+        target: 'http://localhost:5678',
+        changeOrigin: true,
+      }
+    }
+  }
 });
+

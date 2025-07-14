@@ -219,6 +219,10 @@ const Navbar: React.FC = () => {
                         <Package className="w-4 h-4" />
                         <span>My Orders</span>
                       </button>
+                      <button onClick={() => navigate('/ai-chat')}
+                        className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                          <Package className="w-4 h-4" /> <span>Chat with AI</span>
+                      </button>
                       <button 
                         onClick={() => {
                           navigate('/wishlist');

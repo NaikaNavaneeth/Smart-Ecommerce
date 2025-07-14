@@ -1,0 +1,316 @@
+{
+  "name": "Ecommerce",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "products",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "=name",
+              "condition": "ilike",
+              "keyValue": "=%{{$node[\"Code\"].json['product']}}%"
+            },
+            {
+              "keyName": "=price",
+              "condition": "lte",
+              "keyValue": "={{$node[\"Code\"].json[\"budget\"]}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -20
+      ],
+      "id": "bedac715-ac36-4808-a439-dcc9e145d33f",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "6zSYFIPxcePXQ4SL",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "orders",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "product_id",
+              "fieldValue": "={{$node[\"Supabase\"].json[\"id\"]}}"
+            },
+            {
+              "fieldId": "product_name",
+              "fieldValue": "={{$node[\"Supabase\"].json[\"name\"]}}"
+            },
+            {
+              "fieldId": "price",
+              "fieldValue": "={{$node[\"Supabase\"].json[\"price\"]}}"
+            },
+            {
+              "fieldId": "full_name",
+              "fieldValue": "={{$node[\"Code\"].json[\"full_name\"]}}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{$node[\"Code\"].json[\"email\"]}}"
+            },
+            {
+              "fieldId": "mobile_number",
+              "fieldValue": "={{$node[\"Code\"].json[\"mobile_number\"]}}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{$node[\"Code\"].json[\"address\"]}}"
+            },
+            {
+              "fieldId": "city",
+              "fieldValue": "={{$node[\"Code\"].json[\"city\"]}}"
+            },
+            {
+              "fieldId": "pincode",
+              "fieldValue": "={{$node[\"Code\"].json[\"pincode\"]}}"
+            },
+            {
+              "fieldId": "payment_type",
+              "fieldValue": "={{$node[\"Code\"].json[\"payment_type\"]}}"
+            },
+            {
+              "fieldId": "order_status",
+              "fieldValue": "\"Placed\""
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{$now}}"
+            },
+            {
+              "fieldId": "delivery_eta",
+              "fieldValue": "={{ new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString() }}"
+            },
+            {
+              "fieldId": "product_image",
+              "fieldValue": "={{$node[\"Supabase\"].json[\"image_url\"]}}"
+            },
+            {
+              "fieldId": "quantity",
+              "fieldValue": "1"
+            },
+            {
+              "fieldId": "notes",
+              "fieldValue": "={{$node[\"Supabase\"].json[\"features\"]}}"
+            },
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $node[\"Code1\"].json[\"order_id\"] }}"
+            },
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $node[\"Supabase2\"].json[\"id\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        740,
+        -20
+      ],
+      "id": "d8e8dcba-973b-4ae6-9404-68865ed9d110",
+      "name": "Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "6zSYFIPxcePXQ4SL",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.together.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Authorization\": \"Bearer 25d0af3f5475c06f102c672d65d848739b8046a52e17adc3aa035f61ac03265b\",\n  \"Content-Type\": \"application/json\"\n}\n",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"model\": \"mistralai/Mistral-7B-Instruct-v0.3\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful assistant that extracts structured e-commerce order info. Only return JSON like this:\\n{\\n  \\\"product\\\": \\\"\\\",\\n  \\\"budget\\\": 0,\\n  \\\"full_name\\\": \\\"\\\",\\n  \\\"email\\\": \\\"\\\",\\n  \\\"mobile_number\\\": \\\"\\\",\\n  \\\"address\\\": \\\"\\\",\\n  \\\"city\\\": \\\"\\\",\\n  \\\"pincode\\\": \\\"\\\",\\n  \\\"payment_type\\\": \\\"\\\"\\n}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$node[\"Webhook\"].json[\"body\"].message}}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -20
+      ],
+      "id": "3cdb6384-4e56-4afe-b02e-1ad527bdf582",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rawContent = item.json.choices?.[0]?.message?.content?.trim();\n\nif (!rawContent) {\n  throw new Error(\"No content from model\");\n}\n\nlet data;\ntry {\n  data = JSON.parse(rawContent);\n} catch (err) {\n  throw new Error(\"JSON parsing error: \" + err.message);\n}\n\nreturn {\n  json: data\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        -20
+      ],
+      "id": "86ad887d-1ef6-4c50-8b15-ed7d8a2b9f48",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      order_id: `ORD${Date.now()}`,\n      // You can pass other values here if needed\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -20
+      ],
+      "id": "10e261f1-20fc-447c-91fd-8bd5aa882bb6",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "condition": "eq",
+              "keyValue": "={{$node[\"Code\"].json[\"email\"]}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -20
+      ],
+      "id": "2fe47942-b3cd-47e1-b111-a0862c15a26f",
+      "name": "Supabase2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "6zSYFIPxcePXQ4SL",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3eb54e31-9e29-441f-95a5-2a79ad87b61c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        -20
+      ],
+      "id": "4b4847e0-62b6-41ec-9d81-febd031a0f9c",
+      "name": "Webhook",
+      "webhookId": "3eb54e31-9e29-441f-95a5-2a79ad87b61c"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase2": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2a823d23-7137-4ddc-afe9-c1a7e07c9a1f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "052f08e4b32a87d73e5dc196869dc4e2c3945894ebe4c07eb220e15a1e39f1f8"
+  },
+  "id": "Dm9U0QEs68VdbwoZ",
+  "tags": []
+}
