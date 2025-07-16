@@ -13,7 +13,7 @@ const ChatWithAgent = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5678/webhook/3eb54e31-9e29-441f-95a5-2a79ad87b61c', {
+      const response = await fetch('<your_n8n_webhook_production_url>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage }),
