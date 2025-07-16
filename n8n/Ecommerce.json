@@ -138,7 +138,7 @@
         "url": "https://api.together.xyz/v1/chat/completions",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "{\n  \"Authorization\": \"Bearer 25d0af3f5475c06f102c672d65d848739b8046a52e17adc3aa035f61ac03265b\",\n  \"Content-Type\": \"application/json\"\n}\n",
+        "jsonHeaders": "{\n  \"Authorization\": \"Bearer <your_api_key_together.ai>\",\n  \"Content-Type\": \"application/json\"\n}\n",
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
